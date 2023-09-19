@@ -1,10 +1,12 @@
 import socket
 import sys
+import signal
 
 SOCKET_FILE = './domain_socket.sock'
 
 def signal_handler(sig, frame):
     print('stopping client')
+    client.sendall("/Done".encode('utf-8'))
     client.close()
     sys.exit(0)
 
@@ -17,6 +19,9 @@ def serverCheck():
 
 
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+# Register the signal_handler for SIGINT
+signal.signal(signal.SIGINT, signal_handler)
 
 # Ensure the server is running
 serverCheck()
@@ -32,7 +37,7 @@ else:
 # Read and send file contents
 for filename in filenames:
     try:
-        with open(filename, 'r') as f:
+        with open(filename, 'rb') as f:
             contents = f.read()
             
             # Send filename
@@ -44,7 +49,7 @@ for filename in filenames:
             print(client.recv(1024))
             
             # Send file contents
-            client.sendall(contents.encode('utf-8'))
+            client.sendall(contents)
             print(f"Sent contents of {filename} to server.")
             response = client.recv(1024)
             print("Received:", response.decode('utf-8'))
@@ -58,8 +63,3 @@ for filename in filenames:
 
 client.sendall("/Done".encode('utf-8'))
 client.close()
-
-
-
-
-

@@ -16,7 +16,7 @@ class File:
             os.makedirs(directory)
 
         # Write the content to the file
-        with open(os.path.join(directory, self.name), 'w') as f:
+        with open(os.path.join(directory, self.name), 'wb') as f:
             f.write(self.content)
 
 
@@ -63,11 +63,14 @@ while True:
         conn.sendall(b"server has file size")
 
         # Receive file contents and saving the file
-        data = conn.recv(file_size).decode('utf-8')
-        print("Received File Contents:\n", data)
+        data = b""
+        while len(data) < file_size:
+            packet = conn.recv(file_size - len(data))
+            if not packet:
+                break
+            data += packet
+        print("Received file data")
         my_file = File(filename, data)
         my_file.save()
         conn.sendall(b"Files received by server! and saved")
-
-    
     conn.close()
