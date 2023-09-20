@@ -8,23 +8,23 @@ def signal_handler(sig, frame):
     print('stopping client')
     client.sendall("/Done".encode('utf-8'))
     client.close()
-    sys.exit(0)
-
-def serverCheck():
-    try:
-        client.connect(SOCKET_FILE)
-    except socket.error:
-        print("Server is not running.")
-        sys.exit(1)
-
+    sys.exit(0)        
 
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+client.settimeout(10.0)
 
 # Register the signal_handler for SIGINT
 signal.signal(signal.SIGINT, signal_handler)
 
 # Ensure the server is running
-serverCheck()
+try:
+    client.connect(SOCKET_FILE)
+except socket.timeout:
+    print("Timed out while waiting for server connection")
+    client.close()
+except socket.error:
+    print("Server is not running.")
+    sys.exit(1)
 
 # Check for file arguments
 filenames = []
@@ -41,25 +41,31 @@ for filename in filenames:
             contents = f.read()
             
             # Send filename
+            print('giving file name...\n')
             client.sendall((filename + "\n").encode('utf-8'))
-            print(client.recv(1024))
+            print("Received: ", client.recv(1024).decode('utf-8'))
 
             # Send file size
+            print('giving file size...\n')
             client.sendall((str(len(contents)) + "\n").encode('utf-8'))
-            print(client.recv(1024))
+            print("Received: ", client.recv(1024).decode('utf-8'))
             
             # Send file contents
+            print('giving file content...\n')
             client.sendall(contents)
             print(f"Sent contents of {filename} to server.")
-            response = client.recv(1024)
-            print("Received:", response.decode('utf-8'))
+            print("Received: ", client.recv(1024).decode('utf-8'))
             
+    except socket.timeout:
+        print("Timed out while waiting for server response.")
+        client.close()
+        sys.exit(1)
     except FileNotFoundError:
         print(f"File {filename} not found.")
         continue
     except Exception as e:
         print(f"Error reading {filename}: {str(e)}")
-        break
+        continue
 
 client.sendall("/Done".encode('utf-8'))
 client.close()

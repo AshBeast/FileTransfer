@@ -4,13 +4,20 @@ import sys
 import signal
 
 SOCKET_FILE = './domain_socket.sock'
+SAVE_DIRECTORY = ""
+
+# Add this at the top of your server.py
+if len(sys.argv) < 2:
+    print("Please provide a directory to save files into.")
+    sys.exit(1)
+SAVE_DIRECTORY = sys.argv[1]
 
 class File:
     def __init__(self, name, content):
         self.name = name
         self.content = content
 
-    def save(self, directory="saved"):
+    def save(self, directory=SAVE_DIRECTORY):
         # Ensure the directory exists, create if it doesn't
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -18,7 +25,6 @@ class File:
         # Write the content to the file
         with open(os.path.join(directory, self.name), 'wb') as f:
             f.write(self.content)
-
 
 # Handle SIGINT
 def signal_handler(sig, frame):
@@ -28,13 +34,13 @@ def signal_handler(sig, frame):
     print('\nBye')
     sys.exit(0)
 
+# Register the signal_handler for SIGINT
+signal.signal(signal.SIGINT, signal_handler)
+
 # Ensure socket file does not already exist
 def clearSocket():
     if os.path.exists(SOCKET_FILE):
         os.remove(SOCKET_FILE)
-
-# Register the signal_handler for SIGINT
-signal.signal(signal.SIGINT, signal_handler)
 
 clearSocket()
 
