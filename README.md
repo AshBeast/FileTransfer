@@ -47,60 +47,6 @@ This program establishes a client-server system that communicates through UNIX d
 
 **Server**:
 
-Of course, here's a cleanly formatted version you can directly copy and modify for your needs:
-
-markdown
-Copy code
-
-# Client-Server Program Using Domain Sockets
-
-This program establishes a client-server system that communicates through UNIX domain sockets. The client sends files to the server, which in turn saves these received files into a specific directory.
-
-## Table of Contents
-
-- [Features](#features)
-- [Design](#design)
-  - [Server (`server.py`)](#server-serverpy)
-  - [Client (`client.py`)](#client-clientpy)
-- [Setup](#setup)
-- [Usage](#usage)
-- [Test Plan](#test-plan)
-- [Screenshots](#screenshots)
-- [Notes](#notes)
-
-## Features
-
-- Client communicates file details (name, size, content) to the server.
-- Server saves received files to a specified directory.
-- Graceful shutdown on both client and server with proper resource cleanup.
-- Error handling for scenarios like missing files or server not running.
-
-## Design
-
-### Server (`server.py`)
-
-**Functions**:
-
-1. `__init__` (in `File` class) - Initializes a File object with a name and content.
-2. `save` (in `File` class) - Saves the content of the file to a specified directory.
-3. `signal_handler` - Handles the SIGINT signal for graceful shutdown.
-4. `clearSocket` - Removes the domain socket file if it exists to ensure a clean startup.
-
-### Client (`client.py`)
-
-**Function**:
-
-1. `signal_handler` - Handles the SIGINT signal, informs the server about the client's exit and ensures graceful shutdown.
-
-## Setup
-
-1. Clone this repository.
-2. Navigate to the directory containing the program files.
-
-## Usage
-
-**Server**:
-
 ./server <directory_to_save_files>
 **Client**:
 
