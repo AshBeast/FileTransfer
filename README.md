@@ -46,18 +46,24 @@ This program establishes a client-server system that communicates through UNIX d
 ## Usage
 
 **Server**:
+./server.py <directory_to_save_files>
 
-./server <directory_to_save_files>
 **Client**:
+./client.py <name of 1 or more files>
 
 ## Test Plan
 
 1. **Server's ability to receive and save files**:
    - Input: `./server ./test_directory` and `./client test.txt`
    - Expected Output: The content of `test.txt` is saved in `./test_directory/test.txt`.
+   - Input: `./client mountain.jpeg`
+   - Expected Output: The image `mountain.jpeg` is saved in `./test_directory/mountain.jpeg`.
+   - Input: `./client paint.jpg client.py`
+   - Expected Output: The content of `paint.jpg` & `client.py` is saved in `./test_directory/paint.jpg` & `./test_directory/client.py`.
+   - Control-C Server
 2. **Client's ability to handle non-existent files**:
 
-   - Input: `./client nonexistent.txt`
+   - Input: `./server ./test_directory` and `./client nonexistent.txt`
    - Expected Output: "File nonexistent.txt not found."
 
 3. **Server handling multiple file transmissions**:
