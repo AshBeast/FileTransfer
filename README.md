@@ -42,53 +42,62 @@ This program establishes a client-server system that communicates through UNIX d
 
 1. Clone this repository.
 2. Navigate to the directory containing the program files.
+3. You will need 2 terminals at this directory one to run the server and one client
 
 ## Usage
 
 **Server**:
-./server.py <directory_to_save_files>
+python3 server.py <directory_to_save_files>
 
 **Client**:
-./client.py <name of 1 or more files>
+python3 client.py <name of 1 or more files>
 
 ## Test Plan
 
 1. **Server's ability to receive and save files**:
-   - Input: `./server ./test_directory` and `./client test.txt`
+
+   - Input: `python3 server.py ./test_directory` and `python3 client.py test.txt`
    - Expected Output: The content of `test.txt` is saved in `./test_directory/test.txt`.
-   - Input: `./client mountain.jpeg`
+     ![Test Txt](Screenshots/testTxt.png)
+
+   - Input: `python3 client.py mountain.jpeg`
    - Expected Output: The image `mountain.jpeg` is saved in `./test_directory/mountain.jpeg`.
-   - Input: `./client paint.jpg client.py`
-   - Expected Output: The content of `paint.jpg` & `client.py` is saved in `./test_directory/paint.jpg` & `./test_directory/client.py`.
-   - Control-C Server
+     ![Image](Screenshots/imageTest.png)
+
+   - Input: `python3 client.py paint.jpg client.py`
+   - Expected Output: The content of `paint.jpg` and `client.py` is saved in `./test_directory/paint.jpg` and `./test_directory/client.py`.
+     ![More than One File](Screenshots/morethanOneFile.png)
+
 2. **Client's ability to handle non-existent files**:
 
-   - Input: `./server ./test_directory` and `./client nonexistent.txt`
-   - Expected Output: "File nonexistent.txt not found."
+   - Input: `python3 client.py nonexistent.txt`
+   - Expected Output: "File nonexistent.txt not found." and the server will look for the next client
+     ![No File](Screenshots/nofile.png)
 
-3. **Server handling multiple file transmissions**:
+3. **Client shutdown using ctrl-c**:
 
-   - Input: `./client file1.txt file2.txt`
-   - Expected Output: Both files are saved in the server-specified directory.
+   - Input: `python3 client.py` without arguments
+   - control-c
+   - Expected Output: "stopping client."
+     ![Kill Client](Screenshots/killclient.png)
 
 4. **Server shutdown using ctrl-c**:
 
-   - Expected Output: "Shutting Down Server... Bye."
+   - Expected Output:
+     "Shutting Down Server...
 
-5. **Client shutdown using ctrl-c**:
+   Bye."
+   ![Kill Server](Screenshots/killServer.png)
 
-   - Expected Output: "stopping client."
-
-6. **Client handling a non-running server**:
-   - Input: `./client test.txt` (without starting the server)
+5. **Client handling a non-running server**:
+   - Input: `python3 client.py test.txt` (without starting the server)
    - Expected Output: "Server is not running."
-
-## Screenshots
-
-(Note: Include visual demonstrations for each of the test cases here.)
+     ![Client without Server](Screenshots/clientwithoutserver.png)
 
 ## Notes
 
 - Server runs continuously, accepting file transmissions until interrupted by the user.
 - Client can send multiple files in a single run.
 - Client provides informative feedback for errors such as missing files or server not running.
+- If the client is give no files in the argument, the client will ask the user once for files to input
+- Files that already exist in the directory will be overwritten

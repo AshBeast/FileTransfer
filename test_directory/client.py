@@ -5,7 +5,7 @@ import signal
 SOCKET_FILE = './domain_socket.sock'
 
 def signal_handler(sig, frame):
-    print('\nstopping client')
+    print('stopping client')
     client.sendall("/Done".encode('utf-8'))
     client.close()
     sys.exit(0)        
